@@ -1,0 +1,8 @@
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\bin\Debug\PanoramicData.LicenceMagic.dll
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\bin\Debug\PanoramicData.LicenceMagic.pdb
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\obj\Debug\PanoramicData.LicenceMagic.dll
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\obj\Debug\PanoramicData.LicenceMagic.pdb
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\bin\Debug\PanoramicData.LicenceMagic.Licences.dll
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\bin\Debug\PanoramicData.LicenceMagic.Licences.pdb
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\obj\Debug\PanoramicData.LicenceMagic.Licences.dll
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\obj\Debug\PanoramicData.LicenceMagic.Licences.pdb

@@ -1,0 +1,5 @@
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\bin\Debug\LogicMonitor.Api.NuGet.dll
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\bin\Debug\LogicMonitor.Api.NuGet.pdb
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\obj\Debug\PanoramicData.LicenceMagic.csprojResolveAssemblyReference.cache
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\obj\Debug\LogicMonitor.Api.NuGet.dll
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\obj\Debug\LogicMonitor.Api.NuGet.pdb

@@ -1,0 +1,4 @@
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\bin\Release\LogicMonitor.Api.NuGet.dll
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\bin\Release\LogicMonitor.Api.NuGet.pdb
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\obj\Release\LogicMonitor.Api.NuGet.dll
+F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.NuGet\obj\Release\LogicMonitor.Api.NuGet.pdb
