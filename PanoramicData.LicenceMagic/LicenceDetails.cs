@@ -5,7 +5,7 @@ using System.Text;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace PanoramicData.LicenceMagic.Licences
+namespace PanoramicData.LicenceMagic
 {
 	[Serializable]
 	public class LicenceDetails
@@ -30,6 +30,13 @@ namespace PanoramicData.LicenceMagic.Licences
 			var initVectorBlockSize = Crypto.InitVectorSize;
 			if (initVector.Length != initVectorBlockSize) throw new ArgumentException($"Init vector must have length {initVectorBlockSize}", nameof(initVector));
 			_initVector = initVector;
+		}
+
+		/// <summary>
+		/// Serialization Constructor
+		/// </summary>
+		public LicenceDetails()
+		{
 		}
 
 		public string LicensedCompany { get; set; }

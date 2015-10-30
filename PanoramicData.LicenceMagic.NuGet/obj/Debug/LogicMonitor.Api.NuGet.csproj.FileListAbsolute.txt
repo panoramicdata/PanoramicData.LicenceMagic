@@ -1,5 +1,0 @@
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\bin\Debug\LogicMonitor.Api.NuGet.dll
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\bin\Debug\LogicMonitor.Api.NuGet.pdb
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\obj\Debug\LogicMonitor.Api.NuGet.dll
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\obj\Debug\LogicMonitor.Api.NuGet.pdb
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\obj\Debug\LogicMonitor.Api.NuGet.csprojResolveAssemblyReference.cache

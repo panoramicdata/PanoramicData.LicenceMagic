@@ -55,9 +55,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\PanoramicData.LicenceMagic.Licences\PanoramicData.LicenceMagic.Licences.csproj">
+    <ProjectReference Include="..\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.csproj">
       <Project>{F8621C03-871A-4FF2-9C2B-124AAC4C03AB}</Project>
-      <Name>PanoramicData.LicenceMagic.Licences</Name>
+      <Name>PanoramicData.LicenceMagic</Name>
     </ProjectReference>
   </ItemGroup>
   <Choose>

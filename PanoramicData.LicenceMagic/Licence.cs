@@ -2,7 +2,7 @@
 using System.IO;
 using System.Xml.Serialization;
 
-namespace PanoramicData.LicenceMagic.Licences
+namespace PanoramicData.LicenceMagic
 {
 	public class License<T> where T : LicenceDetails
 	{

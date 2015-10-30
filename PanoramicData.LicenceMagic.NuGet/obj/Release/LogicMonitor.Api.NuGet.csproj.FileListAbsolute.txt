@@ -1,4 +1,0 @@
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\bin\Release\LogicMonitor.Api.NuGet.dll
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\bin\Release\LogicMonitor.Api.NuGet.pdb
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\obj\Release\LogicMonitor.Api.NuGet.dll
-F:\Projects\LogicMonitor.Api\LogicMonitor.Api.NuGet\obj\Release\LogicMonitor.Api.NuGet.pdb

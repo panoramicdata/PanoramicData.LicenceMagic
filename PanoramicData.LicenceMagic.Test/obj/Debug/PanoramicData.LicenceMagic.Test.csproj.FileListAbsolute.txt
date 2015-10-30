@@ -1,8 +1,0 @@
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Test\bin\Debug\PanoramicData.LicenceMagic.Test.dll
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Test\bin\Debug\PanoramicData.LicenceMagic.Test.pdb
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Test\bin\Debug\Microsoft.VisualStudio.QualityTools.UnitTestFramework.dll
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Test\bin\Debug\PanoramicData.LicenceMagic.Licences.dll
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Test\bin\Debug\PanoramicData.LicenceMagic.Licences.pdb
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Test\obj\Debug\PanoramicData.LicenceMagic.Test.csprojResolveAssemblyReference.cache
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Test\obj\Debug\PanoramicData.LicenceMagic.Test.dll
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Test\obj\Debug\PanoramicData.LicenceMagic.Test.pdb

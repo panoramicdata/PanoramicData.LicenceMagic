@@ -1,6 +1,0 @@
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\bin\Release\PanoramicData.LicenceMagic.Licences.XML
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\bin\Release\PanoramicData.LicenceMagic.Licences.dll
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\bin\Release\PanoramicData.LicenceMagic.Licences.pdb
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\obj\Release\PanoramicData.LicenceMagic.Licences.dll
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\obj\Release\PanoramicData.LicenceMagic.Licences.pdb
-F:\Projects\PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.Licences\obj\Release\PanoramicData.LicenceMagic.Licences.csprojResolveAssemblyReference.cache

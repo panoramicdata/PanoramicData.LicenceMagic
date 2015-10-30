@@ -3,7 +3,7 @@ using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
-namespace PanoramicData.LicenceMagic.Licences
+namespace PanoramicData.LicenceMagic
 {
 	public static class Crypto
 	{

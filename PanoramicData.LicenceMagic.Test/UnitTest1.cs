@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using PanoramicData.LicenceMagic.Licences;
 
 namespace PanoramicData.LicenceMagic.Test
 {
