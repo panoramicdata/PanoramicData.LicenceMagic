@@ -27,7 +27,7 @@ namespace PanoramicData.LicenceMagic
 		/// <exception cref="ArgumentException"></exception>
 		public LicenceDetails(byte[] initVector)
 		{
-			var initVectorBlockSize = Crypto.InitVectorSize;
+			const int initVectorBlockSize = Crypto.InitVectorSize;
 			if (initVector.Length != initVectorBlockSize) throw new ArgumentException($"Init vector must have length {initVectorBlockSize}", nameof(initVector));
 			_initVector = initVector;
 		}
@@ -110,7 +110,7 @@ namespace PanoramicData.LicenceMagic
 			catch (CryptographicException)
 			{
 				return false;
-			}	
+			}
 		}
 
 		public void Sign(string fileName, byte[] salt)

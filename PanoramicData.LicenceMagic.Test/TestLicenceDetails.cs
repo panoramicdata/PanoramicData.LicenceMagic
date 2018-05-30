@@ -1,5 +1,6 @@
 using System;
 using System.Linq;
+using PanoramicData.LicenceMagic;
 
 namespace PanoramicData.LicenceMagic.Test
 {

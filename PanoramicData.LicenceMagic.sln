@@ -1,21 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.23107.0
+# Visual Studio 15
+VisualStudioVersion = 15.0.27701.1
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{0F16B9E5-5BC0-49CA-9D01-570D376C4DA4}"
-	ProjectSection(SolutionItems) = preProject
-		VersionInfo.cs = VersionInfo.cs
-	EndProjectSection
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PanoramicData.LicenceMagic", "PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.csproj", "{7F739A04-5976-4A36-9AEE-8745B89BE4AD}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PanoramicData.LicenceMagic.NuGet", "PanoramicData.LicenceMagic.NuGet\PanoramicData.LicenceMagic.NuGet.csproj", "{0451BAEF-DF2E-4B98-8644-94EE9415E389}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "PanoramicData.LicenceMagic.Test", "PanoramicData.LicenceMagic.Test\PanoramicData.LicenceMagic.Test.csproj", "{115496D4-A106-4E1E-9745-D2FA2BBFAEED}"
 	ProjectSection(ProjectDependencies) = postProject
-		{F8621C03-871A-4FF2-9C2B-124AAC4C03AB} = {F8621C03-871A-4FF2-9C2B-124AAC4C03AB}
+		{7F739A04-5976-4A36-9AEE-8745B89BE4AD} = {7F739A04-5976-4A36-9AEE-8745B89BE4AD}
 	EndProjectSection
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PanoramicData.LicenceMagic.Test", "PanoramicData.LicenceMagic.Test\PanoramicData.LicenceMagic.Test.csproj", "{9E069E6F-FEA0-4B17-A27C-7CC6BE91F30E}"
-EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "PanoramicData.LicenceMagic", "PanoramicData.LicenceMagic\PanoramicData.LicenceMagic.csproj", "{F8621C03-871A-4FF2-9C2B-124AAC4C03AB}"
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{1D4536CA-76A4-4ABE-AF77-835E89FF551E}"
+	ProjectSection(SolutionItems) = preProject
+		.gitignore = .gitignore
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,20 +21,19 @@ Global
 		Release|Any CPU = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(ProjectConfigurationPlatforms) = postSolution
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{0451BAEF-DF2E-4B98-8644-94EE9415E389}.Release|Any CPU.Build.0 = Release|Any CPU
-		{9E069E6F-FEA0-4B17-A27C-7CC6BE91F30E}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{9E069E6F-FEA0-4B17-A27C-7CC6BE91F30E}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{9E069E6F-FEA0-4B17-A27C-7CC6BE91F30E}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{9E069E6F-FEA0-4B17-A27C-7CC6BE91F30E}.Release|Any CPU.Build.0 = Release|Any CPU
-		{F8621C03-871A-4FF2-9C2B-124AAC4C03AB}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
-		{F8621C03-871A-4FF2-9C2B-124AAC4C03AB}.Debug|Any CPU.Build.0 = Debug|Any CPU
-		{F8621C03-871A-4FF2-9C2B-124AAC4C03AB}.Release|Any CPU.ActiveCfg = Release|Any CPU
-		{F8621C03-871A-4FF2-9C2B-124AAC4C03AB}.Release|Any CPU.Build.0 = Release|Any CPU
+		{7F739A04-5976-4A36-9AEE-8745B89BE4AD}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{7F739A04-5976-4A36-9AEE-8745B89BE4AD}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{7F739A04-5976-4A36-9AEE-8745B89BE4AD}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{7F739A04-5976-4A36-9AEE-8745B89BE4AD}.Release|Any CPU.Build.0 = Release|Any CPU
+		{115496D4-A106-4E1E-9745-D2FA2BBFAEED}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{115496D4-A106-4E1E-9745-D2FA2BBFAEED}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{115496D4-A106-4E1E-9745-D2FA2BBFAEED}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{115496D4-A106-4E1E-9745-D2FA2BBFAEED}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {B8656FB8-3DFC-4273-B0BF-B29EAAA69A06}
 	EndGlobalSection
 EndGlobal
