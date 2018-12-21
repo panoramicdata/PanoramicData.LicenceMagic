@@ -13,9 +13,10 @@ namespace PanoramicData.LicenceMagic
 		// This constant is used to determine the keysize of the encryption algorithm.
 		private const int Keysize = 256;
 		private const int Blocksize = 128;
-		public const int InitVectorSize = Blocksize/8;
+		public const int InitVectorSize = Blocksize / 8;
 
 		/// <summary>
+		/// The encrypt function
 		/// </summary>
 		/// <param name="plainText"></param>
 		/// <param name="passPhrase"></param>
@@ -33,11 +34,11 @@ namespace PanoramicData.LicenceMagic
 			var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
 			using (var password = new Rfc2898DeriveBytes(passPhrase, salt))
 			{
-				var keyBytes = password.GetBytes(Keysize/8);
+				var keyBytes = password.GetBytes(Keysize / 8);
 				using (var symmetricKey = new RijndaelManaged())
 				{
 					symmetricKey.Mode = CipherMode.CBC;
-               using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, initVector))
+					using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, initVector))
 					{
 						using (var memoryStream = new MemoryStream())
 						{
@@ -66,7 +67,7 @@ namespace PanoramicData.LicenceMagic
 			var cipherTextBytes = Convert.FromBase64String(cipherText);
 			using (var password = new Rfc2898DeriveBytes(passPhrase, salt))
 			{
-				var keyBytes = password.GetBytes(Keysize/8);
+				var keyBytes = password.GetBytes(Keysize / 8);
 				using (var symmetricKey = new RijndaelManaged())
 				{
 					symmetricKey.Mode = CipherMode.CBC;

@@ -4,6 +4,12 @@
     <TargetFramework>netcoreapp2.1</TargetFramework>
 
     <IsPackable>false</IsPackable>
+
+    <Version>30.1.2</Version>
+
+    <Description>Deliberately set the version of this test project to be high, as it should be different to the LicenceMagic version.</Description>
+
+    <Copyright>Panoramic Data Limited 2018</Copyright>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|AnyCPU'">

@@ -14,8 +14,7 @@ namespace PanoramicData.LicenceMagic.Test
 		public void SaveToFileAndReload()
 		{
 			// Create a LicenceDetails
-			var originalLicenceDetails = new TestLicenceDetails
-			{
+			var originalLicenceDetails = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
 				EndDateUtc = new DateTime(2020, 01, 01),
 				StartVersion = new Version(1, 0).ToString(),
@@ -25,7 +24,7 @@ namespace PanoramicData.LicenceMagic.Test
 			};
 
 			// The LicenceDetails should not be valid before signing
-			Assert.False(originalLicenceDetails.IsValid(out string errorMessage, GoodFileInfo.Name, _salt));
+			Assert.False(originalLicenceDetails.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
 			originalLicenceDetails.Sign(GoodFileInfo.Name, _salt);
 			Assert.NotNull(errorMessage);
 			Assert.Equal(errorMessage, LicenceDetails.SignatureIsNotValidForThisFileErrorMessage);
@@ -60,8 +59,7 @@ namespace PanoramicData.LicenceMagic.Test
 		public void LackOfVersionShouldFailValidation()
 		{
 			// Create a LicenceDetails
-			var badLicenceDetailsNoEndVersion = new TestLicenceDetails
-			{
+			var badLicenceDetailsNoEndVersion = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
 				EndDateUtc = new DateTime(2020, 01, 01),
 				StartVersion = new Version(1, 0).ToString(),
@@ -71,13 +69,12 @@ namespace PanoramicData.LicenceMagic.Test
 
 			// Signed, this is still invalid as it is missing and EndVersion
 			badLicenceDetailsNoEndVersion.Sign(GoodFileInfo.Name, _salt);
-			Assert.False(badLicenceDetailsNoEndVersion.IsValid(out string errorMessage, GoodFileInfo.Name, _salt));
+			Assert.False(badLicenceDetailsNoEndVersion.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
 			Assert.NotNull(errorMessage);
 			Assert.Equal(errorMessage, LicenceDetails.EndVersionErrorMessage);
 			// Create a LicenceDetails
 
-			var badLicenceDetailsNoStartVersion = new TestLicenceDetails
-			{
+			var badLicenceDetailsNoStartVersion = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
 				EndDateUtc = new DateTime(2020, 01, 01),
 				EndVersion = new Version(1, 0).ToString(),
@@ -96,8 +93,7 @@ namespace PanoramicData.LicenceMagic.Test
 		public void LackOfLicensedCompanyShouldFailValidation()
 		{
 			// Create a LicenceDetails
-			var badLicenceDetailsNoLicensedCompany = new TestLicenceDetails
-			{
+			var badLicenceDetailsNoLicensedCompany = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
 				EndDateUtc = new DateTime(2020, 01, 01),
 				StartVersion = new Version(1, 0).ToString(),
@@ -107,7 +103,7 @@ namespace PanoramicData.LicenceMagic.Test
 
 			// Signed, this is still invalid as it is missing and EndVersion
 			badLicenceDetailsNoLicensedCompany.Sign(GoodFileInfo.Name, _salt);
-			Assert.False(badLicenceDetailsNoLicensedCompany.IsValid(out string errorMessage, GoodFileInfo.Name, _salt));
+			Assert.False(badLicenceDetailsNoLicensedCompany.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
 			Assert.NotNull(errorMessage);
 			Assert.Equal(errorMessage, LicenceDetails.NoLicensedCompanyErrorMessage);
 			// Create a LicenceDetails
@@ -117,8 +113,7 @@ namespace PanoramicData.LicenceMagic.Test
 		public void LackOfLicensedProductShouldFailValidation()
 		{
 			// Create a LicenceDetails
-			var badLicenceDetailsNoLicensedProduct = new TestLicenceDetails
-			{
+			var badLicenceDetailsNoLicensedProduct = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
 				EndDateUtc = new DateTime(2020, 01, 01),
 				StartVersion = new Version(1, 0).ToString(),
@@ -128,7 +123,7 @@ namespace PanoramicData.LicenceMagic.Test
 
 			// Signed, this is still invalid as it is missing and EndVersion
 			badLicenceDetailsNoLicensedProduct.Sign(GoodFileInfo.Name, _salt);
-			Assert.False(badLicenceDetailsNoLicensedProduct.IsValid(out string errorMessage, GoodFileInfo.Name, _salt));
+			Assert.False(badLicenceDetailsNoLicensedProduct.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
 			Assert.NotNull(errorMessage);
 			Assert.Equal(errorMessage, LicenceDetails.NoLicensedProductErrorMessage);
 			// Create a LicenceDetails

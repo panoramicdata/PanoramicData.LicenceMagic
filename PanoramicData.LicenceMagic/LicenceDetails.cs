@@ -8,7 +8,7 @@ using System.Xml.Serialization;
 namespace PanoramicData.LicenceMagic
 {
 	[Serializable]
-	public class LicenceDetails
+	public abstract class LicenceDetails
 	{
 		private readonly byte[] _initVector;
 
@@ -25,7 +25,7 @@ namespace PanoramicData.LicenceMagic
 		/// </summary>
 		/// <param name="initVector"></param>
 		/// <exception cref="ArgumentException"></exception>
-		public LicenceDetails(byte[] initVector)
+		protected LicenceDetails(byte[] initVector)
 		{
 			const int initVectorBlockSize = Crypto.InitVectorSize;
 			if (initVector.Length != initVectorBlockSize) throw new ArgumentException($"Init vector must have length {initVectorBlockSize}", nameof(initVector));
@@ -35,7 +35,7 @@ namespace PanoramicData.LicenceMagic
 		/// <summary>
 		/// Serialization Constructor
 		/// </summary>
-		public LicenceDetails()
+		protected LicenceDetails()
 		{
 		}
 
@@ -84,7 +84,7 @@ namespace PanoramicData.LicenceMagic
 			}
 
 			// Check assembly version
-			var version = typeof(LicenceDetails).Assembly.GetName().Version;
+			var version = GetType().Assembly.GetName().Version;
 			if (StartVersion == null || version < new Version(StartVersion))
 			{
 				errorMessage = StartVersionErrorMessage;
@@ -130,8 +130,7 @@ namespace PanoramicData.LicenceMagic
 		public override string ToString()
 		{
 			var serializer = new XmlSerializer(GetType());
-			var settings = new XmlWriterSettings
-			{
+			var settings = new XmlWriterSettings {
 				Encoding = new UnicodeEncoding(false, false),
 				Indent = false,
 				OmitXmlDeclaration = false
