@@ -12,13 +12,13 @@ public abstract class LicenceDetails
 {
 	private readonly byte[] _initVector = [];
 
-	public const string SignatureIsNotValidForThisFileErrorMessage = "Signature is not valid for this file.";
-	public const string StartDateErrorMessage = "License is not yet valid.  Check the StartDate";
-	public const string EndDateErrorMessage = "License has expired.  Check the EndDate";
-	public const string StartVersionErrorMessage = "License is not yet valid.  Check the StartVersion";
-	public const string EndVersionErrorMessage = "License has expired.  Check the EndVersion";
-	public const string NoLicensedCompanyErrorMessage = "No licensed company.";
-	public const string NoLicensedProductErrorMessage = "No licensed product.";
+	public static string SignatureIsNotValidForThisFileErrorMessage => "Signature is not valid for this file.";
+	public static string StartDateErrorMessage => "License is not yet valid.  Check the StartDate";
+	public static string EndDateErrorMessage => "License has expired.  Check the EndDate";
+	public static string StartVersionErrorMessage => "License is not yet valid.  Check the StartVersion";
+	public static string EndVersionErrorMessage => "License has expired.  Check the EndVersion";
+	public static string NoLicensedCompanyErrorMessage => "No licensed company.";
+	public static string NoLicensedProductErrorMessage => "No licensed product.";
 
 	/// <summary>
 	/// Constructor
@@ -27,8 +27,11 @@ public abstract class LicenceDetails
 	/// <exception cref="ArgumentException"></exception>
 	protected LicenceDetails(byte[] initVector)
 	{
-		const int initVectorBlockSize = Crypto.InitVectorSize;
-		if (initVector.Length != initVectorBlockSize) throw new ArgumentException($"Init vector must have length {initVectorBlockSize}", nameof(initVector));
+		var initVectorBlockSize = Crypto.InitVectorSize;
+		if (initVector.Length != initVectorBlockSize)
+		{
+			throw new ArgumentException($"Init vector must have length {initVectorBlockSize}", nameof(initVector));
+		}
 		_initVector = initVector;
 	}
 
@@ -47,67 +50,61 @@ public abstract class LicenceDetails
 	public string? EndVersion { get; set; }
 	public string? Signature { get; set; }
 
-	public bool IsValid(out string? errorMessage, string fileName, byte[] salt)
+	public LicenceValidationResult Validate(string fileName, byte[] salt)
 	{
-		// Check signature unless in debug
-		if (!SignatureIsValid(fileName, salt))
+		return ValidateSignature(fileName, salt)
+			?? ValidateRequiredFields()
+			?? ValidateDates(DateTime.UtcNow)
+			?? ValidateVersions(GetType().Assembly.GetName().Version)
+			?? LicenceValidationResult.Success;
+	}
+
+	private LicenceValidationResult? ValidateSignature(string fileName, byte[] salt)
+		=> SignatureIsValid(fileName, salt) ? null : LicenceValidationResult.Failure(SignatureIsNotValidForThisFileErrorMessage);
+
+	private LicenceValidationResult? ValidateRequiredFields()
+	{
+		if (LicensedCompany is null)
 		{
-			errorMessage = SignatureIsNotValidForThisFileErrorMessage;
-			return false;
+			return LicenceValidationResult.Failure(NoLicensedCompanyErrorMessage);
 		}
 
-		// Check licensed company
-		if (LicensedCompany == null)
-		{
-			errorMessage = NoLicensedCompanyErrorMessage;
-			return false;
-		}
+		return LicensedProduct is null ? LicenceValidationResult.Failure(NoLicensedProductErrorMessage) : null;
+	}
 
-		// Check licensed product
-		if (LicensedProduct == null)
-		{
-			errorMessage = NoLicensedProductErrorMessage;
-			return false;
-		}
-
-		// Check start and end date
-		var nowUtc = DateTime.UtcNow;
+	private LicenceValidationResult? ValidateDates(DateTime nowUtc)
+	{
 		if (nowUtc < StartDateUtc)
 		{
-			errorMessage = StartDateErrorMessage;
-			return false;
-		}
-		if (nowUtc > EndDateUtc)
-		{
-			errorMessage = EndDateErrorMessage;
-			return false;
+			return LicenceValidationResult.Failure(StartDateErrorMessage);
 		}
 
-		// Check assembly version
-		var version = GetType().Assembly.GetName().Version;
-		if (StartVersion == null || version < new Version(StartVersion))
+		return nowUtc > EndDateUtc ? LicenceValidationResult.Failure(EndDateErrorMessage) : null;
+	}
+
+	private LicenceValidationResult? ValidateVersions(Version? version)
+	{
+		if (StartVersion is null || version < new Version(StartVersion))
 		{
-			errorMessage = StartVersionErrorMessage;
-			return false;
-		}
-		if (EndVersion == null || version > new Version(EndVersion))
-		{
-			errorMessage = EndVersionErrorMessage;
-			return false;
+			return LicenceValidationResult.Failure(StartVersionErrorMessage);
 		}
 
-		errorMessage = null;
-		return true;
+		return EndVersion is null || version > new Version(EndVersion)
+			? LicenceValidationResult.Failure(EndVersionErrorMessage)
+			: null;
 	}
 
 	private bool SignatureIsValid(string fileName, byte[] salt)
 	{
-		if (Signature == null) return false;
+		if (Signature == null)
+		{
+			return false;
+		}
 		try
 		{
 			return SignatureString == Crypto.Decrypt(Signature, fileName, _initVector, salt);
 		}
-		catch (CryptographicException)
+		catch (Exception exception) when (exception is CryptographicException or FormatException)
 		{
 			return false;
 		}

@@ -58,9 +58,10 @@ Read and validate it:
 
 ```csharp
 var licence = new License<ProductLicence>(file);
-if (!licence.IsValid(out var errorMessage, salt))
+var validation = licence.Validate(salt);
+if (!validation.IsValid)
 {
-	throw new InvalidOperationException(errorMessage);
+	throw new InvalidOperationException(validation.ErrorMessage);
 }
 ```
 

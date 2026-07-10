@@ -24,35 +24,62 @@ public class LicenseTests
 		};
 
 		// The LicenceDetails should not be valid before signing
-		Assert.False(originalLicenceDetails.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
+		var validation = originalLicenceDetails.Validate(GoodFileInfo.Name, _salt);
+		Assert.False(validation.IsValid);
 		originalLicenceDetails.Sign(GoodFileInfo.Name, _salt);
-		Assert.NotNull(errorMessage);
-		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, errorMessage);
+		Assert.NotNull(validation.ErrorMessage);
+		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, validation.ErrorMessage);
 
 		// The LicenceDetails should be valid after signing
-		Assert.True(originalLicenceDetails.IsValid(out errorMessage, GoodFileInfo.Name, _salt));
-		Assert.Null(errorMessage);
+		validation = originalLicenceDetails.Validate(GoodFileInfo.Name, _salt);
+		Assert.True(validation.IsValid);
+		Assert.Null(validation.ErrorMessage);
 
 		// ... but only for that filename
-		Assert.False(originalLicenceDetails.IsValid(out errorMessage, BadFileInfo.Name, _salt));
-		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, errorMessage);
+		validation = originalLicenceDetails.Validate(BadFileInfo.Name, _salt);
+		Assert.False(validation.IsValid);
+		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, validation.ErrorMessage);
 
 		// Write the license file
 		new License<TestLicenceDetails>(originalLicenceDetails).WriteToFile(GoodFileInfo, _salt);
 
 		// Read it back in - it should be valid
 		var readBackLicense = new License<TestLicenceDetails>(GoodFileInfo);
-		Assert.True(readBackLicense.IsValid(out errorMessage, _salt));
+		Assert.True(readBackLicense.Validate(_salt).IsValid);
 
 		// ... but not with a different filename
 		BadFileInfo.Delete();
 		GoodFileInfo.MoveTo(BadFileInfo.FullName);
 		readBackLicense = new License<TestLicenceDetails>(BadFileInfo);
-		Assert.False(readBackLicense.IsValid(out errorMessage, _salt));
-		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, errorMessage);
+		validation = readBackLicense.Validate(_salt);
+		Assert.False(validation.IsValid);
+		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, validation.ErrorMessage);
 
 		// Clean-up by deleting the file
 		BadFileInfo.Delete();
+	}
+
+	[Fact]
+	public void TamperedSignatureShouldFailValidation()
+	{
+		var licenceDetails = new TestLicenceDetails {
+			StartDateUtc = new DateTime(2001, 01, 01),
+			EndDateUtc = new DateTime(2100, 01, 01),
+			StartVersion = new Version(1, 0).ToString(),
+			EndVersion = new Version(999, 999).ToString(),
+			LicensedCompany = "ACME Inc",
+			LicensedProduct = "Anvil",
+		};
+
+		licenceDetails.Sign(GoodFileInfo.Name, _salt);
+		var signatureBytes = Convert.FromBase64String(licenceDetails.Signature!);
+		signatureBytes[^1] ^= 1;
+		licenceDetails.Signature = Convert.ToBase64String(signatureBytes);
+
+		var validation = licenceDetails.Validate(GoodFileInfo.Name, _salt);
+
+		Assert.False(validation.IsValid);
+		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, validation.ErrorMessage);
 	}
 
 	[Fact]
@@ -69,9 +96,10 @@ public class LicenseTests
 
 		// Signed, this is still invalid as it is missing and EndVersion
 		badLicenceDetailsNoEndVersion.Sign(GoodFileInfo.Name, _salt);
-		Assert.False(badLicenceDetailsNoEndVersion.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
-		Assert.NotNull(errorMessage);
-		Assert.Equal(LicenceDetails.EndVersionErrorMessage, errorMessage);
+		var validation = badLicenceDetailsNoEndVersion.Validate(GoodFileInfo.Name, _salt);
+		Assert.False(validation.IsValid);
+		Assert.NotNull(validation.ErrorMessage);
+		Assert.Equal(LicenceDetails.EndVersionErrorMessage, validation.ErrorMessage);
 		// Create a LicenceDetails
 
 		var badLicenceDetailsNoStartVersion = new TestLicenceDetails {
@@ -84,9 +112,10 @@ public class LicenseTests
 
 		// Signed, this is still invalid as it is missing and EndVersion
 		badLicenceDetailsNoStartVersion.Sign(GoodFileInfo.Name, _salt);
-		Assert.False(badLicenceDetailsNoStartVersion.IsValid(out errorMessage, GoodFileInfo.Name, _salt));
-		Assert.NotNull(errorMessage);
-		Assert.Equal(LicenceDetails.StartVersionErrorMessage, errorMessage);
+		validation = badLicenceDetailsNoStartVersion.Validate(GoodFileInfo.Name, _salt);
+		Assert.False(validation.IsValid);
+		Assert.NotNull(validation.ErrorMessage);
+		Assert.Equal(LicenceDetails.StartVersionErrorMessage, validation.ErrorMessage);
 	}
 
 	[Fact]
@@ -103,9 +132,10 @@ public class LicenseTests
 
 		// Signed, this is still invalid as it is missing and EndVersion
 		badLicenceDetailsNoLicensedCompany.Sign(GoodFileInfo.Name, _salt);
-		Assert.False(badLicenceDetailsNoLicensedCompany.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
-		Assert.NotNull(errorMessage);
-		Assert.Equal(LicenceDetails.NoLicensedCompanyErrorMessage, errorMessage);
+		var validation = badLicenceDetailsNoLicensedCompany.Validate(GoodFileInfo.Name, _salt);
+		Assert.False(validation.IsValid);
+		Assert.NotNull(validation.ErrorMessage);
+		Assert.Equal(LicenceDetails.NoLicensedCompanyErrorMessage, validation.ErrorMessage);
 		// Create a LicenceDetails
 	}
 
@@ -123,9 +153,10 @@ public class LicenseTests
 
 		// Signed, this is still invalid as it is missing and EndVersion
 		badLicenceDetailsNoLicensedProduct.Sign(GoodFileInfo.Name, _salt);
-		Assert.False(badLicenceDetailsNoLicensedProduct.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
-		Assert.NotNull(errorMessage);
-		Assert.Equal(LicenceDetails.NoLicensedProductErrorMessage, errorMessage);
+		var validation = badLicenceDetailsNoLicensedProduct.Validate(GoodFileInfo.Name, _salt);
+		Assert.False(validation.IsValid);
+		Assert.NotNull(validation.ErrorMessage);
+		Assert.Equal(LicenceDetails.NoLicensedProductErrorMessage, validation.ErrorMessage);
 		// Create a LicenceDetails
 	}
 }

@@ -27,10 +27,10 @@ public class License<T> where T : LicenceDetails
 
 	public void WriteToFile(FileInfo fileInfo, byte[] salt)
 	{
-		string? errorMessage;
-		if (!_licenceDetails.IsValid(out errorMessage, fileInfo.Name, salt))
+		var validation = _licenceDetails.Validate(fileInfo.Name, salt);
+		if (!validation.IsValid)
 		{
-			throw new InvalidOperationException($"Can't write an invalid license: {errorMessage}");
+			throw new InvalidOperationException($"Can't write an invalid license: {validation.ErrorMessage}");
 		}
 
 		var ser = new XmlSerializer(typeof(T));
@@ -40,13 +40,13 @@ public class License<T> where T : LicenceDetails
 		}
 	}
 
-	public bool IsValid(out string? errorMessage, byte[] salt)
+	public LicenceValidationResult Validate(byte[] salt)
 	{
 		if (_fileInfo is null)
 		{
 			throw new InvalidOperationException("Validation without a filename is only available for licences loaded from a file.");
 		}
 
-		return _licenceDetails.IsValid(out errorMessage, _fileInfo.Name, salt);
+		return _licenceDetails.Validate(_fileInfo.Name, salt);
 	}
 }

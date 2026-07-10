@@ -1,5 +1,4 @@
 ﻿using System;
-using System.IO;
 using System.Security.Cryptography;
 using System.Text;
 
@@ -12,8 +11,10 @@ public static class Crypto
 	/// </summary>
 	// This constant is used to determine the keysize of the encryption algorithm.
 	private const int Keysize = 256;
-	private const int Blocksize = 128;
-	public const int InitVectorSize = Blocksize / 8;
+	private const int NonceSize = 12;
+	private const int TagSize = 16;
+	private const int Pbkdf2Iterations = 100_000;
+	public static int InitVectorSize => 16;
 
 	/// <summary>
 	/// The encrypt function
@@ -31,54 +32,51 @@ public static class Crypto
 	{
 		ValidateInitVector(initVector);
 
-		var plainTextBytes = Encoding.UTF8.GetBytes(plainText);
-		var keyBytes = Rfc2898DeriveBytes.Pbkdf2(passPhrase, salt, 1000, HashAlgorithmName.SHA1, Keysize / 8);
-		using (var symmetricKey = Aes.Create())
-		{
-			symmetricKey.Mode = CipherMode.CBC;
-			using (var encryptor = symmetricKey.CreateEncryptor(keyBytes, initVector))
-			{
-				using (var memoryStream = new MemoryStream())
-				{
-					using (var cryptoStream = new CryptoStream(memoryStream, encryptor, CryptoStreamMode.Write))
-					{
-						cryptoStream.Write(plainTextBytes, 0, plainTextBytes.Length);
-						cryptoStream.FlushFinalBlock();
-						var cipherTextBytes = memoryStream.ToArray();
-						return Convert.ToBase64String(cipherTextBytes);
-					}
-				}
-			}
-		}
+		var plaintext = Encoding.UTF8.GetBytes(plainText);
+		var key = DeriveKey(passPhrase, salt);
+		var nonce = RandomNumberGenerator.GetBytes(NonceSize);
+		var ciphertext = new byte[plaintext.Length];
+		var tag = new byte[TagSize];
+
+		using var aes = new AesGcm(key, TagSize);
+		aes.Encrypt(nonce, plaintext, ciphertext, tag, initVector);
+
+		var payload = new byte[NonceSize + TagSize + ciphertext.Length];
+		nonce.CopyTo(payload, 0);
+		tag.CopyTo(payload, NonceSize);
+		ciphertext.CopyTo(payload, NonceSize + TagSize);
+		return Convert.ToBase64String(payload);
 	}
 
 	private static void ValidateInitVector(byte[] initVector)
 	{
-		if (initVector.Length != InitVectorSize) throw new ArgumentException($"Init vector must have length {InitVectorSize}", nameof(initVector));
+		if (initVector.Length != InitVectorSize)
+		{
+			throw new ArgumentException($"Init vector must have length {InitVectorSize}", nameof(initVector));
+		}
 	}
 
 	public static string Decrypt(string cipherText, string passPhrase, byte[] initVector, byte[] salt)
 	{
 		ValidateInitVector(initVector);
 
-		var cipherTextBytes = Convert.FromBase64String(cipherText);
-		var keyBytes = Rfc2898DeriveBytes.Pbkdf2(passPhrase, salt, 1000, HashAlgorithmName.SHA1, Keysize / 8);
-		using (var symmetricKey = Aes.Create())
+		var payload = Convert.FromBase64String(cipherText);
+		if (payload.Length < NonceSize + TagSize)
 		{
-			symmetricKey.Mode = CipherMode.CBC;
-			using (var decryptor = symmetricKey.CreateDecryptor(keyBytes, initVector))
-			{
-				using (var memoryStream = new MemoryStream(cipherTextBytes))
-				{
-					using (var cryptoStream = new CryptoStream(memoryStream, decryptor, CryptoStreamMode.Read))
-					{
-						using (var streamReader = new StreamReader(cryptoStream, Encoding.UTF8))
-						{
-							return streamReader.ReadToEnd();
-						}
-					}
-				}
-			}
+			throw new CryptographicException("The encrypted payload is invalid.");
 		}
+
+		var nonce = payload.AsSpan(0, NonceSize);
+		var tag = payload.AsSpan(NonceSize, TagSize);
+		var ciphertext = payload.AsSpan(NonceSize + TagSize);
+		var plaintext = new byte[ciphertext.Length];
+		var key = DeriveKey(passPhrase, salt);
+
+		using var aes = new AesGcm(key, TagSize);
+		aes.Decrypt(nonce, ciphertext, tag, plaintext, initVector);
+		return Encoding.UTF8.GetString(plaintext);
 	}
+
+	private static byte[] DeriveKey(string passPhrase, byte[] salt)
+		=> Rfc2898DeriveBytes.Pbkdf2(passPhrase, salt, Pbkdf2Iterations, HashAlgorithmName.SHA256, Keysize / 8);
 }
