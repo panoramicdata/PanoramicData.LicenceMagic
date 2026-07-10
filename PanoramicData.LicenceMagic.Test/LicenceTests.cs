@@ -16,7 +16,7 @@ namespace PanoramicData.LicenceMagic.Test
 			// Create a LicenceDetails
 			var originalLicenceDetails = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
-				EndDateUtc = new DateTime(2020, 01, 01),
+				EndDateUtc = new DateTime(2100, 01, 01),
 				StartVersion = new Version(1, 0).ToString(),
 				EndVersion = new Version(999, 999).ToString(),
 				LicensedCompany = "ACME Inc",
@@ -27,7 +27,7 @@ namespace PanoramicData.LicenceMagic.Test
 			Assert.False(originalLicenceDetails.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
 			originalLicenceDetails.Sign(GoodFileInfo.Name, _salt);
 			Assert.NotNull(errorMessage);
-			Assert.Equal(errorMessage, LicenceDetails.SignatureIsNotValidForThisFileErrorMessage);
+			Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, errorMessage);
 
 			// The LicenceDetails should be valid after signing
 			Assert.True(originalLicenceDetails.IsValid(out errorMessage, GoodFileInfo.Name, _salt));
@@ -35,7 +35,7 @@ namespace PanoramicData.LicenceMagic.Test
 
 			// ... but only for that filename
 			Assert.False(originalLicenceDetails.IsValid(out errorMessage, BadFileInfo.Name, _salt));
-			Assert.Equal(errorMessage, LicenceDetails.SignatureIsNotValidForThisFileErrorMessage);
+			Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, errorMessage);
 
 			// Write the license file
 			new License<TestLicenceDetails>(originalLicenceDetails).WriteToFile(GoodFileInfo, _salt);
@@ -49,7 +49,7 @@ namespace PanoramicData.LicenceMagic.Test
 			GoodFileInfo.MoveTo(BadFileInfo.FullName);
 			readBackLicense = new License<TestLicenceDetails>(BadFileInfo);
 			Assert.False(readBackLicense.IsValid(out errorMessage, _salt));
-			Assert.Equal(errorMessage, LicenceDetails.SignatureIsNotValidForThisFileErrorMessage);
+			Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, errorMessage);
 
 			// Clean-up by deleting the file
 			BadFileInfo.Delete();
@@ -61,7 +61,7 @@ namespace PanoramicData.LicenceMagic.Test
 			// Create a LicenceDetails
 			var badLicenceDetailsNoEndVersion = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
-				EndDateUtc = new DateTime(2020, 01, 01),
+				EndDateUtc = new DateTime(2100, 01, 01),
 				StartVersion = new Version(1, 0).ToString(),
 				LicensedCompany = "ACME Inc",
 				LicensedProduct = "Anvil",
@@ -71,12 +71,12 @@ namespace PanoramicData.LicenceMagic.Test
 			badLicenceDetailsNoEndVersion.Sign(GoodFileInfo.Name, _salt);
 			Assert.False(badLicenceDetailsNoEndVersion.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
 			Assert.NotNull(errorMessage);
-			Assert.Equal(errorMessage, LicenceDetails.EndVersionErrorMessage);
+			Assert.Equal(LicenceDetails.EndVersionErrorMessage, errorMessage);
 			// Create a LicenceDetails
 
 			var badLicenceDetailsNoStartVersion = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
-				EndDateUtc = new DateTime(2020, 01, 01),
+				EndDateUtc = new DateTime(2100, 01, 01),
 				EndVersion = new Version(1, 0).ToString(),
 				LicensedCompany = "ACME Inc",
 				LicensedProduct = "Anvil",
@@ -86,7 +86,7 @@ namespace PanoramicData.LicenceMagic.Test
 			badLicenceDetailsNoStartVersion.Sign(GoodFileInfo.Name, _salt);
 			Assert.False(badLicenceDetailsNoStartVersion.IsValid(out errorMessage, GoodFileInfo.Name, _salt));
 			Assert.NotNull(errorMessage);
-			Assert.Equal(errorMessage, LicenceDetails.StartVersionErrorMessage);
+			Assert.Equal(LicenceDetails.StartVersionErrorMessage, errorMessage);
 		}
 
 		[Fact]
@@ -95,7 +95,7 @@ namespace PanoramicData.LicenceMagic.Test
 			// Create a LicenceDetails
 			var badLicenceDetailsNoLicensedCompany = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
-				EndDateUtc = new DateTime(2020, 01, 01),
+				EndDateUtc = new DateTime(2100, 01, 01),
 				StartVersion = new Version(1, 0).ToString(),
 				EndVersion = new Version(1, 9).ToString(),
 				LicensedProduct = "Anvil",
@@ -105,7 +105,7 @@ namespace PanoramicData.LicenceMagic.Test
 			badLicenceDetailsNoLicensedCompany.Sign(GoodFileInfo.Name, _salt);
 			Assert.False(badLicenceDetailsNoLicensedCompany.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
 			Assert.NotNull(errorMessage);
-			Assert.Equal(errorMessage, LicenceDetails.NoLicensedCompanyErrorMessage);
+			Assert.Equal(LicenceDetails.NoLicensedCompanyErrorMessage, errorMessage);
 			// Create a LicenceDetails
 		}
 
@@ -115,7 +115,7 @@ namespace PanoramicData.LicenceMagic.Test
 			// Create a LicenceDetails
 			var badLicenceDetailsNoLicensedProduct = new TestLicenceDetails {
 				StartDateUtc = new DateTime(2001, 01, 01),
-				EndDateUtc = new DateTime(2020, 01, 01),
+				EndDateUtc = new DateTime(2100, 01, 01),
 				StartVersion = new Version(1, 0).ToString(),
 				EndVersion = new Version(1, 9).ToString(),
 				LicensedCompany = "ACME Inc",
@@ -125,7 +125,7 @@ namespace PanoramicData.LicenceMagic.Test
 			badLicenceDetailsNoLicensedProduct.Sign(GoodFileInfo.Name, _salt);
 			Assert.False(badLicenceDetailsNoLicensedProduct.IsValid(out var errorMessage, GoodFileInfo.Name, _salt));
 			Assert.NotNull(errorMessage);
-			Assert.Equal(errorMessage, LicenceDetails.NoLicensedProductErrorMessage);
+			Assert.Equal(LicenceDetails.NoLicensedProductErrorMessage, errorMessage);
 			// Create a LicenceDetails
 		}
 	}
