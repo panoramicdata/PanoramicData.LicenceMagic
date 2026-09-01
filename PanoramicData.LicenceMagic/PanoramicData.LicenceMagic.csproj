@@ -1,31 +1,29 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
-
-	<PropertyGroup>
-		<TargetFramework>net10.0</TargetFramework>
-		<NeutralResourcesLanguage>en</NeutralResourcesLanguage>
-		<PackageId>PanoramicData.LicenceMagic</PackageId>
-		<Owners>Panoramic Data Limited</Owners>
-		<PackageProjectUrl>https://github.com/panoramicdata/PanoramicData.LicenceMagic</PackageProjectUrl>
-		<RepositoryUrl>https://github.com/panoramicdata/PanoramicData.LicenceMagic</RepositoryUrl>
-		<RepositoryType>git</RepositoryType>
-		<PackageLicenseExpression>MIT</PackageLicenseExpression>
-		<PackageIcon>Logo.png</PackageIcon>
-		<Description>.NET 10 library for creating, signing, and validating application licence files.</Description>
-		<PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
-		<IncludeSymbols>true</IncludeSymbols>
-		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
-		<GeneratePackageOnBuild>true</GeneratePackageOnBuild>
-		<PackageTags>Licensing;Licence;Cryptography;PanoramicData</PackageTags>
-		<PackageReadmeFile>README.md</PackageReadmeFile>
-	</PropertyGroup>
-
-	<ItemGroup>
-		<PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" />
-	</ItemGroup>
-
-	<ItemGroup>
-		<None Include="Logo.png" Pack="true" PackagePath="" />
-		<None Include="..\README.md" Link="README.md" Pack="true" PackagePath="" />
-	</ItemGroup>
-
+  <PropertyGroup>
+    <TargetFramework>net10.0</TargetFramework>
+    <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
+    <PackageId>PanoramicData.LicenceMagic</PackageId>
+    <Owners>Panoramic Data Limited</Owners>
+    <PackageProjectUrl>https://github.com/panoramicdata/PanoramicData.LicenceMagic</PackageProjectUrl>
+    <RepositoryUrl>https://github.com/panoramicdata/PanoramicData.LicenceMagic</RepositoryUrl>
+    <RepositoryType>git</RepositoryType>
+    <PackageLicenseExpression>MIT</PackageLicenseExpression>
+    <PackageIcon>Logo.png</PackageIcon>
+    <Description>.NET 10 library for creating, signing, and validating application licence files.</Description>
+    <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
+    <IncludeSymbols>true</IncludeSymbols>
+    <SymbolPackageFormat>snupkg</SymbolPackageFormat>
+    <GeneratePackageOnBuild>true</GeneratePackageOnBuild>
+    <PackageTags>Licensing;Licence;Cryptography;PanoramicData</PackageTags>
+    <PackageReadmeFile>README.md</PackageReadmeFile>
+    <ImplicitUsings>enable</ImplicitUsings>
+  </PropertyGroup>
+  <ItemGroup>
+    <PackageReference Include="Nerdbank.GitVersioning" PrivateAssets="all" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Logo.png" Pack="true" PackagePath="" />
+    <None Include="..\README.md" Link="README.md" Pack="true" PackagePath="" />
+  </ItemGroup>
 </Project>
