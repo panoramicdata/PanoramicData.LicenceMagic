@@ -18,6 +18,10 @@ jobs:
       security-events: write
     steps:
       - uses: actions/checkout@v7
+        with:
+          # Nerdbank.GitVersioning walks history to compute the version height, so autobuild
+          # fails outright on the default shallow clone. CI does the same for the same reason.
+          fetch-depth: 0
       - uses: github/codeql-action/init@v4
         with:
           languages: csharp
