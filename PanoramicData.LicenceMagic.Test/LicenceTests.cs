@@ -10,25 +10,50 @@ public class LicenseTests
 	private static readonly FileInfo BadFileInfo = new FileInfo(Path.Combine(Path.GetTempPath(), "test1.lic"));
 	private readonly byte[] _salt = { 0, 1, 2, 3, 4, 5, 6, 7 };
 
+	/// <summary>
+	/// Builds licence details that are valid in every respect, so that each test can omit exactly
+	/// the one field it is about by passing null for it.
+	/// </summary>
+	private static TestLicenceDetails CreateLicenceDetails(
+		string? startVersion = "1.0",
+		string? endVersion = "999.999",
+		string? licensedCompany = "ACME Inc",
+		string? licensedProduct = "Anvil")
+		=> new() {
+			StartDateUtc = new DateTime(2001, 01, 01),
+			EndDateUtc = new DateTime(2100, 01, 01),
+			StartVersion = startVersion,
+			EndVersion = endVersion,
+			LicensedCompany = licensedCompany,
+			LicensedProduct = licensedProduct,
+		};
+
+	private static void AssertValidationFailed(LicenceValidationResult validation, string expectedErrorMessage)
+	{
+		Assert.False(validation.IsValid);
+		Assert.NotNull(validation.ErrorMessage);
+		Assert.Equal(expectedErrorMessage, validation.ErrorMessage);
+	}
+
+	/// <summary>
+	/// Signs the details, then asserts that validating them still fails for the given reason.
+	/// </summary>
+	private void AssertSignedValidationFails(TestLicenceDetails licenceDetails, string expectedErrorMessage)
+	{
+		licenceDetails.Sign(GoodFileInfo.Name, _salt);
+		AssertValidationFailed(licenceDetails.Validate(GoodFileInfo.Name, _salt), expectedErrorMessage);
+	}
+
 	[Fact]
 	public void SaveToFileAndReload()
 	{
-		// Create a LicenceDetails
-		var originalLicenceDetails = new TestLicenceDetails {
-			StartDateUtc = new DateTime(2001, 01, 01),
-			EndDateUtc = new DateTime(2100, 01, 01),
-			StartVersion = new Version(1, 0).ToString(),
-			EndVersion = new Version(999, 999).ToString(),
-			LicensedCompany = "ACME Inc",
-			LicensedProduct = "Anvil",
-		};
+		var originalLicenceDetails = CreateLicenceDetails();
 
 		// The LicenceDetails should not be valid before signing
 		var validation = originalLicenceDetails.Validate(GoodFileInfo.Name, _salt);
 		Assert.False(validation.IsValid);
 		originalLicenceDetails.Sign(GoodFileInfo.Name, _salt);
-		Assert.NotNull(validation.ErrorMessage);
-		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, validation.ErrorMessage);
+		AssertValidationFailed(validation, LicenceDetails.SignatureIsNotValidForThisFileErrorMessage);
 
 		// The LicenceDetails should be valid after signing
 		validation = originalLicenceDetails.Validate(GoodFileInfo.Name, _salt);
@@ -37,8 +62,7 @@ public class LicenseTests
 
 		// ... but only for that filename
 		validation = originalLicenceDetails.Validate(BadFileInfo.Name, _salt);
-		Assert.False(validation.IsValid);
-		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, validation.ErrorMessage);
+		AssertValidationFailed(validation, LicenceDetails.SignatureIsNotValidForThisFileErrorMessage);
 
 		// Write the license file
 		new License<TestLicenceDetails>(originalLicenceDetails).WriteToFile(GoodFileInfo, _salt);
@@ -51,9 +75,7 @@ public class LicenseTests
 		BadFileInfo.Delete();
 		GoodFileInfo.MoveTo(BadFileInfo.FullName);
 		readBackLicense = new License<TestLicenceDetails>(BadFileInfo);
-		validation = readBackLicense.Validate(_salt);
-		Assert.False(validation.IsValid);
-		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, validation.ErrorMessage);
+		AssertValidationFailed(readBackLicense.Validate(_salt), LicenceDetails.SignatureIsNotValidForThisFileErrorMessage);
 
 		// Clean-up by deleting the file
 		BadFileInfo.Delete();
@@ -62,101 +84,40 @@ public class LicenseTests
 	[Fact]
 	public void TamperedSignatureShouldFailValidation()
 	{
-		var licenceDetails = new TestLicenceDetails {
-			StartDateUtc = new DateTime(2001, 01, 01),
-			EndDateUtc = new DateTime(2100, 01, 01),
-			StartVersion = new Version(1, 0).ToString(),
-			EndVersion = new Version(999, 999).ToString(),
-			LicensedCompany = "ACME Inc",
-			LicensedProduct = "Anvil",
-		};
+		var licenceDetails = CreateLicenceDetails();
 
 		licenceDetails.Sign(GoodFileInfo.Name, _salt);
 		var signatureBytes = Convert.FromBase64String(licenceDetails.Signature!);
 		signatureBytes[^1] ^= 1;
 		licenceDetails.Signature = Convert.ToBase64String(signatureBytes);
 
-		var validation = licenceDetails.Validate(GoodFileInfo.Name, _salt);
-
-		Assert.False(validation.IsValid);
-		Assert.Equal(LicenceDetails.SignatureIsNotValidForThisFileErrorMessage, validation.ErrorMessage);
+		AssertValidationFailed(
+			licenceDetails.Validate(GoodFileInfo.Name, _salt),
+			LicenceDetails.SignatureIsNotValidForThisFileErrorMessage);
 	}
 
 	[Fact]
 	public void LackOfVersionShouldFailValidation()
 	{
-		// Create a LicenceDetails
-		var badLicenceDetailsNoEndVersion = new TestLicenceDetails {
-			StartDateUtc = new DateTime(2001, 01, 01),
-			EndDateUtc = new DateTime(2100, 01, 01),
-			StartVersion = new Version(1, 0).ToString(),
-			LicensedCompany = "ACME Inc",
-			LicensedProduct = "Anvil",
-		};
+		// Signed, these are still invalid as each is missing a version bound
+		AssertSignedValidationFails(
+			CreateLicenceDetails(endVersion: null),
+			LicenceDetails.EndVersionErrorMessage);
 
-		// Signed, this is still invalid as it is missing and EndVersion
-		badLicenceDetailsNoEndVersion.Sign(GoodFileInfo.Name, _salt);
-		var validation = badLicenceDetailsNoEndVersion.Validate(GoodFileInfo.Name, _salt);
-		Assert.False(validation.IsValid);
-		Assert.NotNull(validation.ErrorMessage);
-		Assert.Equal(LicenceDetails.EndVersionErrorMessage, validation.ErrorMessage);
-		// Create a LicenceDetails
-
-		var badLicenceDetailsNoStartVersion = new TestLicenceDetails {
-			StartDateUtc = new DateTime(2001, 01, 01),
-			EndDateUtc = new DateTime(2100, 01, 01),
-			EndVersion = new Version(1, 0).ToString(),
-			LicensedCompany = "ACME Inc",
-			LicensedProduct = "Anvil",
-		};
-
-		// Signed, this is still invalid as it is missing and EndVersion
-		badLicenceDetailsNoStartVersion.Sign(GoodFileInfo.Name, _salt);
-		validation = badLicenceDetailsNoStartVersion.Validate(GoodFileInfo.Name, _salt);
-		Assert.False(validation.IsValid);
-		Assert.NotNull(validation.ErrorMessage);
-		Assert.Equal(LicenceDetails.StartVersionErrorMessage, validation.ErrorMessage);
+		AssertSignedValidationFails(
+			CreateLicenceDetails(startVersion: null, endVersion: "1.0"),
+			LicenceDetails.StartVersionErrorMessage);
 	}
 
 	[Fact]
 	public void LackOfLicensedCompanyShouldFailValidation()
-	{
-		// Create a LicenceDetails
-		var badLicenceDetailsNoLicensedCompany = new TestLicenceDetails {
-			StartDateUtc = new DateTime(2001, 01, 01),
-			EndDateUtc = new DateTime(2100, 01, 01),
-			StartVersion = new Version(1, 0).ToString(),
-			EndVersion = new Version(1, 9).ToString(),
-			LicensedProduct = "Anvil",
-		};
-
-		// Signed, this is still invalid as it is missing and EndVersion
-		badLicenceDetailsNoLicensedCompany.Sign(GoodFileInfo.Name, _salt);
-		var validation = badLicenceDetailsNoLicensedCompany.Validate(GoodFileInfo.Name, _salt);
-		Assert.False(validation.IsValid);
-		Assert.NotNull(validation.ErrorMessage);
-		Assert.Equal(LicenceDetails.NoLicensedCompanyErrorMessage, validation.ErrorMessage);
-		// Create a LicenceDetails
-	}
+		=> AssertSignedValidationFails(
+			CreateLicenceDetails(endVersion: "1.9", licensedCompany: null),
+			LicenceDetails.NoLicensedCompanyErrorMessage);
 
 	[Fact]
 	public void LackOfLicensedProductShouldFailValidation()
-	{
-		// Create a LicenceDetails
-		var badLicenceDetailsNoLicensedProduct = new TestLicenceDetails {
-			StartDateUtc = new DateTime(2001, 01, 01),
-			EndDateUtc = new DateTime(2100, 01, 01),
-			StartVersion = new Version(1, 0).ToString(),
-			EndVersion = new Version(1, 9).ToString(),
-			LicensedCompany = "ACME Inc",
-		};
-
-		// Signed, this is still invalid as it is missing and EndVersion
-		badLicenceDetailsNoLicensedProduct.Sign(GoodFileInfo.Name, _salt);
-		var validation = badLicenceDetailsNoLicensedProduct.Validate(GoodFileInfo.Name, _salt);
-		Assert.False(validation.IsValid);
-		Assert.NotNull(validation.ErrorMessage);
-		Assert.Equal(LicenceDetails.NoLicensedProductErrorMessage, validation.ErrorMessage);
-		// Create a LicenceDetails
-	}
+		=> AssertSignedValidationFails(
+			CreateLicenceDetails(endVersion: "1.9", licensedProduct: null),
+			LicenceDetails.NoLicensedProductErrorMessage);
 }

@@ -1,8 +1,35 @@
-param(
+﻿param(
 	# Skips waiting for the release run. The tag is still pushed, but nothing confirms a package
 	# reached nuget.org — use it only if you are checking the run yourself.
 	[switch]$SkipPublishVerification
 )
+
+# Write-Host is deliberately not used here (PSScriptAnalyzer PSAvoidUsingWriteHost): it cannot be
+# redirected or suppressed, so it breaks when this script runs in a host that has no console.
+# Write-Information with an explicit InformationAction reaches the console the same way while
+# remaining redirectable, and the colour cues are kept as ANSI sequences.
+function Write-Status {
+	param(
+		[Parameter(Position = 0)][AllowEmptyString()][string]$Message = '',
+		[ValidateSet('Default', 'Red', 'Yellow', 'Cyan', 'Green')][string]$Colour = 'Default'
+	)
+
+	$escape = [char]27
+	$colours = @{
+		Default = ''
+		Red     = "$escape[31m"
+		Yellow  = "$escape[33m"
+		Cyan    = "$escape[36m"
+		Green   = "$escape[32m"
+	}
+
+	$prefix = $colours[$Colour]
+	if ($prefix -and $Message) {
+		$Message = "$prefix$Message$escape[0m"
+	}
+
+	Write-Information $Message -InformationAction Continue
+}
 
 # Ensure we are on the main branch
 $branch = git rev-parse --abbrev-ref HEAD
@@ -59,7 +86,7 @@ if ($LASTEXITCODE -ne 0) {
 	exit 1
 }
 $version = ($buildOutput | Select-Object -Last 1).ToString().Trim()
-Write-Host "Version: $version"
+Write-Status "Version: $version"
 
 # Check if tag already exists
 $existingTag = git tag -l $version
@@ -71,7 +98,7 @@ if ($existingTag) {
 # Create and push tag
 git tag $version
 git push origin $version
-Write-Host "Tag $version pushed."
+Write-Status "Tag $version pushed."
 
 if ($SkipPublishVerification) {
 	Write-Warning "Not waiting for the release run (-SkipPublishVerification). Nothing has confirmed that a package reached nuget.org."
@@ -82,7 +109,7 @@ if ($SkipPublishVerification) {
 $originUrl = git remote get-url origin
 $repoFullName = ($originUrl -replace '^.*github\.com[:/]', '') -replace '\.git$', ''
 
-Write-Host "Waiting for the release run for $version..."
+Write-Status "Waiting for the release run for $version..."
 
 # The run takes a few seconds to appear after the tag push.
 $runId = $null
@@ -100,13 +127,13 @@ if (-not $runId) {
 	exit 1
 }
 
-Write-Host "Run: https://github.com/$repoFullName/actions/runs/$runId"
+Write-Status "Run: https://github.com/$repoFullName/actions/runs/$runId"
 gh run watch $runId --repo $repoFullName --exit-status --interval 20
 $runExitCode = $LASTEXITCODE
 
 if ($runExitCode -ne 0) {
-	Write-Host ""
-	Write-Host "The release run did not succeed: https://github.com/$repoFullName/actions/runs/$runId" -ForegroundColor Red
+	Write-Status
+	Write-Status "The release run did not succeed: https://github.com/$repoFullName/actions/runs/$runId" -Colour Red
 
 	# A refused job — an exhausted Actions budget, for instance — fails before any step runs, so it
 	# has no failed step to report. The check-run annotation is the only place the reason appears.
@@ -114,14 +141,14 @@ if ($runExitCode -ne 0) {
 	if ($LASTEXITCODE -eq 0 -and $jobId) {
 		$annotation = gh api "repos/$repoFullName/check-runs/$jobId/annotations" --jq '.[0].message' 2>$null
 		if ($LASTEXITCODE -eq 0 -and $annotation) {
-			Write-Host "Reason: $annotation" -ForegroundColor Red
+			Write-Status "Reason: $annotation" -Colour Red
 		}
 	}
 
-	Write-Host ""
-	Write-Host "Tag $version is pushed but no package was published. Once the cause is fixed:" -ForegroundColor Yellow
-	Write-Host "  gh run rerun $runId --repo $repoFullName --failed" -ForegroundColor Cyan
+	Write-Status
+	Write-Status "Tag $version is pushed but no package was published. Once the cause is fixed:" -Colour Yellow
+	Write-Status "  gh run rerun $runId --repo $repoFullName --failed" -Colour Cyan
 	exit 1
 }
 
-Write-Host "Package $version published." -ForegroundColor Green
+Write-Status "Package $version published." -Colour Green
