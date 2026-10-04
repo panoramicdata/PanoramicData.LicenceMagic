@@ -1,22 +1,32 @@
 # Contributing
 
-Thank you for contributing to PanoramicData.LicenceMagic.
+Thank you for your interest in contributing to this project!
 
-## Workflow
+## How to Contribute
 
-1. Fork the repository.
-2. Create a branch for the change.
-3. Add or update tests as appropriate.
-4. Run `dotnet test --configuration Release`.
-5. Open a pull request against `main`.
+1. **Fork** the repository
+2. **Create a branch** for your feature or fix (`git checkout -b feature/my-feature`)
+3. **Make your changes** following the coding standards below
+4. **Write or update tests** as appropriate
+5. **Ensure the build passes** with zero errors, zero warnings, and zero messages
+6. **Submit a Pull Request** against the `main` branch
 
-## Standards
+## Coding Standards
 
-- Target .NET 10.
-- Use file-scoped namespaces and tabs for indentation.
-- Keep nullable reference types and warnings-as-errors enabled.
-- Document public APIs with XML comments where practical.
-- Preserve compatibility with existing licence signatures unless documenting a deliberate breaking change.
-- Ensure builds complete without diagnostics and all tests pass.
+- All public members must have XML documentation comments
+- Use `System.Text.Json` — do not introduce `Newtonsoft.Json`
+- Use Refit for HTTP client interfaces
+- Use file-scoped namespaces
+- Use the `required` keyword for DTO properties where appropriate
+- Ensure `TreatWarningsAsErrors` remains enabled
+- All code must compile with zero diagnostics
 
-Contributions are licensed under the repository's MIT License.
+## Testing
+
+- Use xUnit v3 for all tests
+- Use AwesomeAssertions for fluent assertions
+- Ensure all existing tests pass before submitting a PR
+
+## License
+
+By contributing, you agree that your contributions will be licensed under the MIT License.
