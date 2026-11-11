@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFramework>net10.0</TargetFramework>
+    <TargetFramework>net11.0</TargetFramework>
     <NeutralResourcesLanguage>en</NeutralResourcesLanguage>
     <PackageId>PanoramicData.LicenceMagic</PackageId>
     <Owners>Panoramic Data Limited</Owners>
