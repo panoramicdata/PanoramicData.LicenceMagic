@@ -5,9 +5,12 @@
 [![NuGet Downloads](https://img.shields.io/nuget/dt/PanoramicData.LicenceMagic)](https://www.nuget.org/packages/PanoramicData.LicenceMagic)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
+
+Supports .NET 11.0.
+
 ## Introduction
 
-PanoramicData.LicenceMagic is a .NET 10 library for creating, signing, writing, reading, and validating application licence files.
+PanoramicData.LicenceMagic is a .NET 11.0 library for creating, signing, writing, reading, and validating application licence files.
 
 Licence signatures are bound to a filename and validated against the licensed company, product, validity dates, and assembly version range.
 
